@@ -12,54 +12,17 @@ namespace OOPExamples
             var users = GenerateUsers(banks);
 
             //1) Сделать выборку всех Пользователей, имя + фамилия которых длиннее чем 12 символов.
-
-            var longNameUsers = users.Where(x => x.FirstName.Length + x.LastName.Length > 12).ToList();
-
             //2) Сделать выборку всех транзакций (в результате должен получится список из 1000 транзакций)
-
-            var transactions = users.Select(x => x.Transactions).ToList();
-
             //3) Вывести Банк: и всех его пользователей (Имя + фамилия + количество транзакий в гривне) отсортированных по Фамилии по убиванию. в таком виде :
             //   Имя банка 
             //   ***************
             //   Игорь Сердюк 
             //   Николай Басков
-
-            var usersInBanksDictionary = banks.GroupJoin(users.OrderByDescending(x => x.LastName), x => x.Name, y => y.Bank.Name, (x, y) => new { Bank = x.Name, Users = y });
-
-            foreach (var bank in usersInBanksDictionary)
-            {
-                Console.WriteLine(bank.Bank);
-                Console.WriteLine("*************");
-                foreach (var user in bank.Users)
-                {
-                    Console.WriteLine($"{user.FirstName} {user.LastName} {user.Transactions.Count(x => x.Currency == Currency.UAH)}");
-                }
-                Console.WriteLine();
-            }
-
             //4) Сделать выборку всех Пользователей типа Admin, у которых счет в банке, в котором больше всего транзакций
-
-            var usersInBanks = usersInBanksDictionary.Select(x => x.Users);
-            var usersWithMostTransactions = usersInBanks.FirstOrDefault(x => x.Sum(u => u.Transactions.Count) == usersInBanks.Max(y => y.Sum(t => t.Transactions.Count)));
-            var admins2 = usersWithMostTransactions.Where(u => u.Type == UserType.Admin).ToList();
-
             //5) Найти Пользователей(НЕ АДМИНОВ), которые произвели больше всего транзакций в определенной из валют (UAH,USD,EUR) 
             //то есть найти трёх пользователей: 1й который произвел больше всего транзакций в гривне, второй пользователь, который произвел больше всего транзакций в USD 
             //и третьего в EUR
-
-            var commonUsers = users.Where(x => x.Type != UserType.Admin);
-            var mostCurrencyTransactionUsers = new List<User>();
-            for (var i = 1; i < 4; i++)
-            {
-                Func<User, int> currencyTransaction = delegate (User user) { return user.Transactions.Count(y => y.Currency == (Currency)i); };
-                var mostCurrencyTransactionUser = commonUsers.FirstOrDefault(x => currencyTransaction.Invoke(x) == commonUsers.Max(currencyTransaction));
-                mostCurrencyTransactionUsers.Add(mostCurrencyTransactionUser);
-            }
-
             //6) Сделать выборку транзакций банка, у которого больше всего Pemium пользователей
-
-            var mostPremiumBankTransactions = usersInBanks.FirstOrDefault(x => x.Count(y => y.Type == UserType.Premium) == usersInBanks.Max(x => x.Count(y => y.Type == UserType.Premium))).Select(y => y.Transactions).ToList(); ;
 
             Console.ReadLine();
         }
