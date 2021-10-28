@@ -24,7 +24,6 @@ namespace OOPExamples
             //   ***************
             //   Игорь Сердюк 
             //   Николай Басков
-
             var usersInBanksDictionary = banks.GroupJoin(users.OrderByDescending(x => x.LastName), x => x.Name, y => y.Bank.Name, (x, y) => new { Bank = x.Name, Users = y });
 
             foreach (var bank in usersInBanksDictionary)
